@@ -42,6 +42,25 @@ Lens map, used to tag each roast: **UI** = 1 to 4, 9 · **UX** = 5, 6, 10, 11, 1
 
 Project context: if the working directory has a `CLAUDE.md` or `AGENTS.md` with UI rules (colors from a shared theme, `useRFLayout` for RTL, bottom sheet components, 5 states for infinite scroll), check against those rules too and cite them.
 
+## Motion check (for the Feel lens)
+
+A still image has no time in it. To judge hover, transitions, and easing, get one of these, best first:
+
+1. **Code.** Read the transition or animation code: CSS `transition` / `@keyframes`, Framer Motion, Reanimated (`withTiming`, `withSpring`, `withDecay`), `Animated`. Check duration, easing, what property is animated (`transform` and `opacity` vs width, height, top), stagger, interruptibility, reduced-motion fallback.
+2. **Running web app.** Use whichever browser tool is available (built-in browser or Claude in Chrome). Hover or click the element and take a screenshot before, during (right after the trigger), and after. Read the real values with JS: `getComputedStyle(el).transition` and `el.getAnimations()`. Check hover, focus, pressed, and disabled states, not only the default one.
+3. **Screen recording to frames.** Read the video as images; the file reader cannot play video.
+   - Check `which ffmpeg`. Trim to the moment that matters, then sample frames into a new empty folder: `ffmpeg -ss <start> -t <seconds> -i <video> -vf "fps=20,scale=480:-1" <outdir>/%03d.png`. Use fps 20 to 30 for 200 to 300ms transitions, 10 for slow scenes.
+   - For an overview, make a contact sheet: `ffmpeg -i <video> -vf "fps=10,scale=240:-1,tile=6x4" <outdir>/sheet.png`, then read the frames around the change.
+   - Record Android with `adb shell screenrecord --time-limit 8 /sdcard/m.mp4` then `adb pull`. Record the iOS simulator with `xcrun simctl io booted recordVideo m.mov`. Check `which adb` first; it may live under the Android SDK `platform-tools`.
+4. **The user's description.** Last resort. Ask what they see at the start, middle, and end of the motion.
+
+What frames can tell: a state or feedback exists or is missing, order of events, rough duration (frame count times frame interval), layout shift, a frame where content disappears (the blink), overshoot, whether the highlight moves or just jumps.
+What frames cannot tell: the exact easing curve, jank, spring feel. Say so, and point to the code for those.
+
+Evidence labels: end every Feel roast's "Why" with where it came from: `(from code)`, `(from frames, about 50ms resolution)`, or `(from computed styles)`. Say "about" for any duration read from frames. Never present a guessed number as measured.
+
+If none of 1 to 4 is available, mark `Feel –` in the Lenses line and ask for one of them.
+
 ## Roast rules
 
 - **Roast the design, never the person.** No jokes about the author, the team, or the user's taste. The screen is the target.
@@ -116,6 +135,6 @@ Next: paste the combined prompt into a new session, or run `/design-prompt-rewri
 ## When the input is thin
 
 - Only a vague description ("my app feels bad")? Ask for one thing: a screenshot or the screen's file path. Do not roast blind.
-- Motion cannot be judged from a still image. Say so in one line and ask for a screen recording description or the animation code, then roast what you can see.
+- Motion cannot be judged from a still image. Say so in one line, ask for the animation code, a screen recording, or a running app (see Motion check), then roast what you can see.
 - One screen only: judge UI, UX states, Feel (if code or recording exists), and Style. Mark Flow as not judged and offer to review the journey if they share the next screens or describe the steps.
 - Multiple screens: do a flow pass first (steps, labels, dead ends, back path), then roast the worst screen, and say which you picked.
