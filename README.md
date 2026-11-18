@@ -1,4 +1,4 @@
-# design-skills
+# agent-skills
 
 Two Claude Code skills for people who aren't designers.
 
@@ -12,7 +12,7 @@ Each skill ships with `references/keywords.md`, a UI/UX/animation vocabulary (ea
 ## Install
 
 ```bash
-npx skills add https://github.com/hikhtiarta27/design-skills
+npx skills add https://github.com/hikhtiarta27/agent-skills
 ```
 
 Or copy the two folders into `~/.claude/skills/` and start a new session.
